@@ -1,0 +1,18 @@
+<!-- templates/emails/project_invitation.txt -->
+Project Collaboration Invitation
+
+You've been invited to collaborate!
+
+{{ inviter_name }} from {{ firm_name }} has invited you to collaborate on:
+{{ project_name }}
+
+To accept this invitation and start collaborating, please visit:
+{{ invite_url }}
+
+Important: This invitation link will expire in {{ expiry_days }} days.
+
+If you did not expect this invitation or don't know the sender, please ignore this email.
+
+---
+This is an automated message from {{ firm_name }}'s project management system.
+© {% now "Y" %} {{ firm_name }}. All rights reserved.

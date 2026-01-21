@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Invitation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #4f46e5;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            background-color: #f9fafb;
+            padding: 30px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4f46e5;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .inviter-info {
+            background-color: #eef2ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Project Collaboration Invitation</h1>
+        </div>
+        
+        <div class="content">
+            <h2>You've been invited to collaborate!</h2>
+            
+            <div class="inviter-info">
+                <p><strong>{{ inviter_name }}</strong> from <strong>{{ firm_name }}</strong> has invited you to collaborate on:</p>
+                <h3>{{ project_name }}</h3>
+            </div>
+            
+            <p>To accept this invitation and start collaborating, please click the button below:</p>
+            
+            <div style="text-align: center;">
+                <a href="{{ invite_url }}" class="button">Accept Invitation & Set Up Account</a>
+            </div>
+            
+   
+            <p><strong>Important:</strong> This invitation link will expire in {{ expiry_days }} days.</p>
+            
+            <p>If you did not expect this invitation or don't know the sender, please ignore this email.</p>
+        </div>
+        
+        <div class="footer">
+            <p>This is an automated message from {{ firm_name }}'s project management system.</p>
+            <p>© {% now "Y" %} {{ firm_name }}. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
