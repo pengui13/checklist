@@ -9,7 +9,7 @@ from django.db import transaction
 from rest_framework import status 
 from organisation.tasks import send_email_task
 from users.models import Invitation
-
+from django.db.models import Q
 class GetFirms(ListCreateAPIView):
     permission_classes = [IsAuth]
     queryset = Firm.objects.all()
@@ -68,12 +68,17 @@ class ProjectView(ListCreateAPIView):
     serializer_class = ProjectSerializer
     
     def get_queryset(self):
-        return Project.objects.filter(firm = self.request.user.firm)
+        firm = self.request.user.firm
+        return Project.objects.filter(Q(firm = firm) | Q(partner = firm))
     
     def perform_create(self, request):
+        partner_id = self.request.data.get('partner')
+        partner = None
+        if partner_id:
+            partner = Firm.objects.filter(id = partner_id).first() 
         serializer = self.get_serializer(data = self.request.data)
         serializer.is_valid(raise_exception = True)
-        project = serializer.save(firm = self.request.user.firm)
+        project = serializer.save(firm = self.request.user.firm, partner = partner)
         return Response(
             ProjectSerializer(project).data,
             status = status.HTTP_201_CREATED
@@ -82,7 +87,11 @@ class ProjectView(ListCreateAPIView):
 class TaskView(ListCreateAPIView):
     permission_classes = [IsAuth]
     serializer_class = TaskSerializer
-    queryset = Task.objects.all()
+    
+    def get_queryset(self):
+        project_id = self.request.query_params.get('project')
+        queryset = Task.objects.filter(project__id=project_id)
+        return queryset
     def perform_create(self, serializer):
         task = serializer.save()
         emails = list(task.assigned_users.values_list('email', flat = True))

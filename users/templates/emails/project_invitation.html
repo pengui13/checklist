@@ -8,9 +8,10 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #1a1a1a;
             margin: 0;
             padding: 0;
+            background-color: #ffffff;
         }
         .container {
             max-width: 600px;
@@ -18,21 +19,22 @@
             padding: 20px;
         }
         .header {
-            background-color: #4f46e5;
-            color: white;
+            background-color: #000000;
+            color: #ffffff;
             padding: 20px;
             text-align: center;
         }
         .content {
-            background-color: #f9fafb;
+            background-color: #f5f5f5;
             padding: 30px;
             border-radius: 8px;
             margin: 20px 0;
+            border: 1px solid #e0e0e0;
         }
         .button {
             display: inline-block;
-            background-color: #4f46e5;
-            color: white;
+            background-color: #000000;
+            color: #ffffff;
             text-decoration: none;
             padding: 12px 24px;
             border-radius: 6px;
@@ -41,16 +43,17 @@
         }
         .footer {
             text-align: center;
-            color: #6b7280;
+            color: #666666;
             font-size: 14px;
             padding: 20px;
-            border-top: 1px solid #e5e7eb;
+            border-top: 1px solid #e0e0e0;
         }
         .inviter-info {
-            background-color: #eef2ff;
+            background-color: #ebebeb;
             padding: 15px;
             border-radius: 6px;
             margin: 20px 0;
+            border: 1px solid #d0d0d0;
         }
     </style>
 </head>
@@ -71,10 +74,9 @@
             <p>To accept this invitation and start collaborating, please click the button below:</p>
             
             <div style="text-align: center;">
-                <a href="{{ invite_url }}" class="button">Accept Invitation & Set Up Account</a>
+                <a  style = {'color':'white'} href="{{ invite_url }}" class="button">Accept Invitation & Set Up Account</a>
             </div>
             
-   
             <p><strong>Important:</strong> This invitation link will expire in {{ expiry_days }} days.</p>
             
             <p>If you did not expect this invitation or don't know the sender, please ignore this email.</p>
