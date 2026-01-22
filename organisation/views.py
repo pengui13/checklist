@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated as IsAuth
+from misc.permissions import IsAuth
 from rest_framework.generics import ListCreateAPIView
 from .models import Firm, Project, Task, TaskAttachment
 from rest_framework.exceptions import NotFound
@@ -10,6 +10,7 @@ from rest_framework import status
 from organisation.tasks import send_email_task
 from users.models import Invitation
 from django.db.models import Q
+
 class GetFirms(ListCreateAPIView):
     permission_classes = [IsAuth]
     queryset = Firm.objects.all()

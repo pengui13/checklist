@@ -1,21 +1,24 @@
 from dj_rest_auth.views  import UserDetailsView
 from .serializers import CustomUserDetailsSerializer, UpdateUserSerializer, CreateUserSerializer, UserListSerializer, InvitationSerializer
 from rest_framework.generics import UpdateAPIView, CreateAPIView, ListAPIView
-from rest_framework.permissions import IsAuthenticated as IsAuth
+from misc.permissions import IsAuth, IsFirmaAdmin
 from .models import User, Invitation
 from rest_framework.response import Response
 from rest_framework import status
 from django.db.models import Q
-from organisation.models import Task
+from organisation.models import Task, Firm
 from organisation.tasks import send_email_task
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils import timezone
 from django.db import transaction
+from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
+
 
 class GetUserInfo(UserDetailsView):
     serializer_class = CustomUserDetailsSerializer
-    
+        
 class UpdateUserColor(UpdateAPIView):
     serializer_class = UpdateUserSerializer
     permission_classes = [IsAuth]
@@ -26,7 +29,34 @@ class UpdateUserColor(UpdateAPIView):
     def get_serializer(self, *args, **kwargs):
         kwargs["partial"] = True
         return super().get_serializer(*args, **kwargs)
-    
+
+
+class UpdateActivity(APIView):
+    permission_classes = [IsAuth, IsFirmaAdmin]
+
+    def patch(self, request, *args, **kwargs):
+        firm_id = request.query_params.get("firm")
+        if not firm_id:
+            return Response({"error": "firm query param is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        firm = get_object_or_404(Firm, id=firm_id)
+
+        user_id = request.data.get("user_id")
+        if not user_id:
+            return Response({"error": "user_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        target_user = get_object_or_404(User, id=user_id)
+
+        if target_user.firm_id != firm.id:
+            return Response({"error": "No given permissions"}, status=status.HTTP_403_FORBIDDEN)
+
+        target_user.is_active = not target_user.is_active
+        target_user.save(update_fields=["is_active"])
+
+        return Response({"user_id": target_user.id, "is_active": target_user.is_active}, status=status.HTTP_200_OK)
+        
+        
+
 class CreateUser(CreateAPIView):
     permission_classes = [IsAuth]
     serializer_class = CreateUserSerializer
@@ -41,6 +71,8 @@ class CreateUser(CreateAPIView):
             UserListSerializer(user).data,
             status = status.HTTP_201_CREATED
         )
+
+
         
 class GetAllUsers(ListAPIView):
     permission_classes = [IsAuth]
@@ -142,3 +174,5 @@ class AcceptInvitationView(CreateAPIView):
             },
             status=201,
         )
+        
+

@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'organisation',
-    'users'
+    'users',
+    'misc',
     
 ]
 
@@ -120,6 +121,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware', 
+    'misc.middleware.ActivityLogMiddleware',
+    
 
 ]
 
