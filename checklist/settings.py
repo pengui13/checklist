@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'organisation',
     'users',
     'misc',
+    'django_celery_beat'
     
 ]
 
@@ -75,6 +76,8 @@ FRONTEND_URL = 'http://localhost:3000/'
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
 
+CELERY_TIMEZONE = 'Europe/Berlin'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
@@ -86,6 +89,16 @@ REST_FRAMEWORK = {
 
     ]
         
+}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'checklist'),
+        'USER': os.getenv('POSTGRES_USER', 'checklist'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'checklist'),
+        'HOST': os.getenv('POSTGRES_HOST', 'db'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
+    }
 }
 
 AUTHENTICATION_BACKENDS = (
@@ -158,12 +171,6 @@ WSGI_APPLICATION = 'checklist.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation

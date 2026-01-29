@@ -54,7 +54,8 @@ class UpdateActivity(APIView):
         target_user.save(update_fields=["is_active"])
 
         return Response({"user_id": target_user.id, "is_active": target_user.is_active}, status=status.HTTP_200_OK)
-        
+    
+      
         
 
 class CreateUser(CreateAPIView):

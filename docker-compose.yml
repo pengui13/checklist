@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
@@ -10,6 +10,7 @@ services:
       - .env
     depends_on:
       - redis
+      - db
 
   celery:
     build: .
@@ -20,18 +21,35 @@ services:
       - .env
     depends_on:
       - redis
+      - db
 
   celery_beat:
     build: .
-    command: celery -A checklist beat -l info
+    command: celery -A checklist beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - .:/app
     env_file:
       - .env
     depends_on:
       - redis
+      - db
+
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: checklist
+      POSTGRES_USER: checklist
+      POSTGRES_PASSWORD: checklist
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+
+volumes:
+  postgres_data:

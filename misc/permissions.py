@@ -19,7 +19,7 @@ class IsAuth(BasePermission):
 
 class IsFirmaAdmin(BasePermission):
     def has_permission(self, request, view):
-        firm_id = request.get.query_params('firm')
+        firm_id = request.query_params.get('firm')
         firm = Firm.objects.filter(id = firm_id).first()
         if request.user.is_admin and request.user.firm == firm:
             return True

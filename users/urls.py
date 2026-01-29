@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import GetUserInfo, UpdateUserColor, CreateUser, GetAllUsers, SendInvitationView, AcceptInvitationView
+from .views import GetUserInfo, UpdateUserColor, UpdateActivity, CreateUser, GetAllUsers, SendInvitationView, AcceptInvitationView
 urlpatterns = [
     
     path('', include('dj_rest_auth.urls')),  
@@ -10,4 +10,6 @@ urlpatterns = [
     path('users/create/', CreateUser.as_view(), name = 'create_user'),  
     path("invitations/send/", SendInvitationView.as_view(), name="invitation-send"),
     path("invitations/accept/", AcceptInvitationView.as_view(), name="invitation-accept"),
+    path("toggle_active/", UpdateActivity.as_view(), name="toggle_activity"),
+    
 ]

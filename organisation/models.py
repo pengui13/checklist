@@ -69,6 +69,7 @@ class Task(models.Model):
         ('active', 'Aktiv'),
         ('new', 'Neu'),
         ('completed', 'Fertig'),
+        ('expired', 'Abgelaufen'),
     ]
     
     name = models.CharField(max_length=100)
