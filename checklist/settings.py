@@ -149,15 +149,6 @@ MIDDLEWARE = [
     'misc.middleware.ActivityLogMiddleware',
 ]
 
-# WhiteNoise configuration
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-}
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", 
