@@ -22,18 +22,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-s4^ngu$y6!oj2i-zrtt#l58r3(4=afyor^n9c=*m^&x_2lf=kd'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-s4^ngu$y6!oj2i-zrtt#l58r3(4=afyor^n9c=*m^&x_2lf=kd')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['cryphos.com']
+ALLOWED_HOSTS = ['cryphos.com', 'www.cryphos.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +52,6 @@ INSTALLED_APPS = [
     'users',
     'misc',
     'django_celery_beat'
-    
 ]
 
 SITE_ID = 1 
@@ -70,11 +68,12 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'jwt-auth'
-FRONTEND_URL = 'http://localhost:3000/'
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'https://cryphos.com/')
 
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
+
 CSRF_TRUSTED_ORIGINS = [
     "https://cryphos.com",
     "http://cryphos.com",
@@ -82,8 +81,14 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
+
+# Static files
+STATIC_URL = "/api/static/"
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# Media files
+MEDIA_URL = "/api/media/"
+MEDIA_ROOT = BASE_DIR / 'media'
 
 CELERY_TIMEZONE = 'Europe/Berlin'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
@@ -91,13 +96,11 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
-AUTH_USER_MODEL  = 'users.User'
+AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES':[
-            'rest_framework_simplejwt.authentication.JWTAuthentication',
-
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
-        
 }
 DATABASES = {
     'default': {
@@ -124,7 +127,6 @@ REST_AUTH = {
     'JWT_AUTH_REFRESH_COOKIE': 'refresh-token', 
     'JWT_AUTH_HTTPONLY': False,  
     'USER_DETAILS_SERIALIZER': 'users.serializers.CustomUserDetailsSerializer',  
-
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -133,8 +135,10 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Must be right after SecurityMiddleware
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -144,24 +148,27 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware', 
     'misc.middleware.ActivityLogMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-
-
 ]
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# WhiteNoise configuration
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+}
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", 
     "http://127.0.0.1:3000",
     "https://cryphos.com",
     "http://cryphos.com",
-    
-    
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True  # Remove this in production
 
 ROOT_URLCONF = 'checklist.urls'
 
@@ -183,14 +190,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'checklist.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-
-
 # Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -208,8 +208,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -218,10 +216,5 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
-
-STATIC_URL = "/api/static/"
-
-MEDIA_URL = "/api/media/"
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
