@@ -75,6 +75,13 @@ FRONTEND_URL = 'http://localhost:3000/'
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", CELERY_BROKER_URL)
+CSRF_TRUSTED_ORIGINS = [
+    "https://cryphos.com",
+    "http://cryphos.com",
+    "https://www.cryphos.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
 
 CELERY_TIMEZONE = 'Europe/Berlin'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
